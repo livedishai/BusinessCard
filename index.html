@@ -5,24 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>JEWELS-AI | Live Drive AR</title>
 
-  <!-- External AR Libraries -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
-    /* ======================================================
-       JEWELS-AI | COMPLETE STYLESHEET
-    ====================================================== */
-
-    /* RESET & BASE STYLES */
-    body { 
-      margin: 0; 
-      background: #000; 
-      overflow: hidden; 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    /* 1. RESET & BASE STYLES */
+    body {
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* THE BLACK CURTAIN: Blocks the blue screen entirely */
+    /* 2. THE BLACK CURTAIN: Blocks everything, including the blue screen */
     #blackCurtain {
       position: fixed;
       top: 0;
@@ -34,10 +29,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.5s ease; /* Professional fade-out */
     }
 
-    /* CUSTOM LOADER */
+    /* 3. CUSTOM LOADER (Jewels-AI Style) */
     #loader {
       color: white;
       text-align: center;
@@ -53,13 +48,13 @@
       100% { opacity: 0.4; }
     }
 
-    /* BUTTON PANEL STYLES */
+    /* 4. BUTTON PANEL STYLES */
     .button-panel {
       position: absolute;
       bottom: 30px;
       left: 50%;
       transform: translateX(-50%);
-      display: none; 
+      display: none;
       z-index: 100;
     }
 
@@ -81,14 +76,28 @@
       transform: scale(0.95);
     }
 
-    /* INSTAGRAM BUTTON STYLING - FIXED POSITION */
+    /* 5. FORCE-HIDE ANY STRAY MINDAR ELEMENTS (LOCKDOWN) */
+    [class^="mindar-ui"],
+    [id^="mindar-ui"],
+    .mindar-ui-overlay {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+
+    /* 6. SCENE & CANVAS RESET */
+    a-scene, .a-canvas {
+      background-color: #000 !important;
+    }
+
+    /* 7. INSTAGRAM BUTTON - FIXED POSITION */
     #instagramButton {
       position: fixed;
       bottom: 25px;
       right: 25px;
       width: 55px;
       height: 55px;
-      z-index: 100000; /* Ensures it stays above everything */
+      z-index: 100000; /* Ensure it stays above everything */
       cursor: pointer;
       background: white;
       border-radius: 14px;
@@ -96,7 +105,7 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      transition: transform 0.2s ease, opacity 0.2s ease;
+      transition: transform 0.2s ease;
       text-decoration: none;
     }
 
@@ -112,253 +121,239 @@
     #instagramButton:active {
       transform: scale(0.95);
     }
-
-    /* FORCE-HIDE ANY STRAY MINDAR UI ELEMENTS */
-    [class^="mindar-ui"],
-    [id^="mindar-ui"],
-    .mindar-ui-overlay {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-    }
-
-    /* SCENE & CANVAS RESET */
-    a-scene, .a-canvas {
-      background-color: #000 !important;
-    }
   </style>
 </head>
 
 <body>
 
-  <!-- Loading Screen Overlay -->
-  <div id="blackCurtain">
-    <div id="loader">Initializing AI Engine...</div>
-  </div>
+<div id="blackCurtain">
+  <div id="loader">Initializing AI Engine...</div>
+</div>
 
-  <!-- Floating Instagram Button -->
-  <a href="https://www.instagram.com/overlay_gifts_ai/" target="_blank" id="instagramButton" rel="noopener noreferrer">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
-  </a>
+<a href="https://www.instagram.com/overlay_gifts_ai/" target="_blank" id="instagramButton">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
+</a>
 
-  <!-- AR Interaction Button Panel -->
-  <div class="button-panel" id="planButtons">
-    <button class="plan-button" id="toggleButton">▶️ Play Video</button>
-  </div>
+<div class="button-panel" id="planButtons">
+  <button class="plan-button" id="toggleButton">▶️ Play Video</button>
+</div>
 
-  <!-- AR Scene -->
-  <a-scene 
-    mindar-image="imageTargetSrc: ./targets.mind; uiLoading: no; uiError: no;"
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false"
-    renderer="antialias: true; alpha: true">
+<a-scene
+  mindar-image="imageTargetSrc: ./targets.mind; uiLoading: no; uiError: no;"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false"
+  renderer="antialias: true; alpha: true">
 
-    <a-assets>
-      <video
-        id="driveVideo"
-        playsinline
-        preload="auto"
-        loop
-        crossorigin="anonymous">
-      </video>
-    </a-assets>
+  <a-assets>
+    <video
+      id="driveVideo"
+      playsinline
+      preload="auto"
+      loop
+      crossorigin="anonymous">
+    </video>
+  </a-assets>
 
-    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <a-entity id="target1" mindar-image-target="targetIndex: 0">
-      <a-plane
-        id="videoPlane"
-        width="0.562"
-        height="1"
-        visible="false"
-        material="src: #driveVideo; side: double; transparent: true">
-      </a-plane>
-    </a-entity>
+  <a-entity id="target1" mindar-image-target="targetIndex: 0">
+    <a-plane
+      id="videoPlane"
+      width="0.562"
+      height="1"
+      visible="false"
+      material="src: #driveVideo; side: double; transparent: true">
+    </a-plane>
+  </a-entity>
 
-  </a-scene>
+</a-scene>
 
-  <script>
-    /* ======================================================
-       JEWELS-AI | ULTRA FAST DRIVE AR ENGINE (UNIFIED LOGIC)
-    ====================================================== */
+<script>
+/* ======================================================
+   JEWELS-AI | ULTRA FAST DRIVE AR ENGINE
+   Optimized Version - Live Drive Sync (No Caching)
+   Feature: Auto-Crop (Center-Fill) for 16:9 and 9:16
+====================================================== */
 
-    const API_KEY = "AIzaSyC_6UEJhSjWUnWaXlBpHy9MYiJAWiX5EBI"; 
-    const FOLDER_ID = "1UoN6NAnSRM0B-rd-fH0V50yry3Hie-_Y"; 
+const API_KEY = "AIzaSyC_6UEJhSjWUnWaXlBpHy9MYiJAWiX5EBI";
+const FOLDER_ID = "1UoN6NAnSRM0B-rd-fH0V50yry3Hie-_Y";
 
-    /* ===============================
-       OPTIMIZED CHROMA KEY SHADER
-    ================================ */
-    AFRAME.registerShader('chromakey', {
-      schema: {
-        src: { type: 'map' },
-        color: { type: 'color', default: '#00FF00' },
-        threshold: { type: 'number', default: 0.3 },
-        smoothness: { type: 'number', default: 0.05 }
+/* ===============================
+   CHROMA KEY SHADER
+================================ */
+AFRAME.registerShader('chromakey', {
+  schema: {
+    src: { type: 'map' },
+    color: { type: 'color', default: '#00FF00' },
+    threshold: { type: 'number', default: 0.3 },
+    smoothness: { type: 'number', default: 0.05 }
+  },
+
+  init: function (data) {
+    const videoTexture = new THREE.VideoTexture(data.src);
+    videoTexture.minFilter = THREE.LinearFilter;
+    videoTexture.magFilter = THREE.LinearFilter;
+    videoTexture.generateMipmaps = false;
+    videoTexture.format = THREE.RGBAFormat;
+
+    this.material = new THREE.ShaderMaterial({
+      uniforms: {
+        tex: { value: videoTexture },
+        keyColor: { value: new THREE.Color(data.color) },
+        similarity: { value: data.threshold },
+        smoothness: { value: data.smoothness }
       },
-
-      init: function (data) {
-        const videoTexture = new THREE.VideoTexture(data.src);
-        videoTexture.minFilter = THREE.LinearFilter;
-        videoTexture.magFilter = THREE.LinearFilter;
-        videoTexture.generateMipmaps = false;
-        videoTexture.format = THREE.RGBAFormat;
-
-        this.material = new THREE.ShaderMaterial({
-          uniforms: {
-            tex: { value: videoTexture },
-            keyColor: { value: new THREE.Color(data.color) },
-            similarity: { value: data.threshold },
-            smoothness: { value: data.smoothness }
-          },
-          vertexShader: `
-            varying vec2 vUv;
-            void main() {
-              vUv = uv;
-              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-          `,
-          fragmentShader: `
-            uniform sampler2D tex;
-            uniform vec3 keyColor;
-            uniform float similarity;
-            uniform float smoothness;
-            varying vec2 vUv;
-            void main() {
-              vec4 videoColor = texture2D(tex, vUv);
-              float diff = distance(videoColor.rgb, keyColor);
-              float alpha = smoothstep(similarity, similarity + smoothness, diff);
-              if (alpha < 0.1) discard; 
-              gl_FragColor = vec4(videoColor.rgb, alpha);
-            }
-          `,
-          transparent: true
-        });
-      },
-
-      update: function (data) {
-        this.material.uniforms.similarity.value = data.threshold;
-        this.material.uniforms.smoothness.value = data.smoothness;
-        this.material.uniforms.keyColor.value = new THREE.Color(data.color);
-      }
-    });
-
-    /* ===============================
-       FRESH DRIVE FETCH (NO CACHE)
-    ================================ */
-    async function getLatestVideoId() {
-      try {
-        const url = `https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents+and+mimeType+contains+'video/'&orderBy=modifiedTime desc&pageSize=1&fields=files(id)&key=${API_KEY}`;
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.files && data.files.length > 0) {
-          return data.files[0].id; 
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
-        return null;
-      } catch (error) {
-        console.error("Drive Fetch Error:", error);
-        return null;
+      `,
+      fragmentShader: `
+        uniform sampler2D tex;
+        uniform vec3 keyColor;
+        uniform float similarity;
+        uniform float smoothness;
+        varying vec2 vUv;
+        void main() {
+          vec4 videoColor = texture2D(tex, vUv);
+          float diff = distance(videoColor.rgb, keyColor);
+          float alpha = smoothstep(similarity, similarity + smoothness, diff);
+
+          if (alpha < 0.1) discard;
+
+          gl_FragColor = vec4(videoColor.rgb, alpha);
+        }
+      `,
+      transparent: true
+    });
+  },
+
+  update: function (data) {
+    this.material.uniforms.similarity.value = data.threshold;
+    this.material.uniforms.smoothness.value = data.smoothness;
+    this.material.uniforms.keyColor.value = new THREE.Color(data.color);
+  }
+});
+
+/* ===============================
+   FRESH DRIVE FETCH (NO CACHE)
+================================ */
+async function getLatestVideoId() {
+  try {
+    const url = `https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents+and+mimeType+contains+'video/'&orderBy=modifiedTime desc&pageSize=1&fields=files(id)&key=${API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.files && data.files.length > 0) {
+      return data.files[0].id;
+    }
+    return null;
+  } catch (error) {
+    console.error("Drive Fetch Error:", error);
+    return null;
+  }
+}
+
+/* ===============================
+   AR INTERACTION LOGIC
+================================ */
+window.addEventListener("load", async () => {
+  const videoEl = document.querySelector("#driveVideo");
+  const videoPlane = document.querySelector("#videoPlane") || document.querySelector("#videoCircle");
+  const target = document.querySelector("#target1");
+  const toggleButton = document.querySelector("#toggleButton");
+  const buttonsContainer = document.querySelector("#planButtons");
+  const curtain = document.querySelector("#blackCurtain");
+  const sceneEl = document.querySelector('a-scene');
+
+  let isPlaying = false;
+
+  // Cleanup MindAR UI
+  const uiKiller = setInterval(() => {
+    const uiElements = document.querySelectorAll('[class^="mindar-ui"], [id^="mindar-ui"]');
+    uiElements.forEach(el => el.remove());
+  }, 100);
+
+  // --- AUTO-CROP LOGIC ---
+  videoEl.addEventListener('loadedmetadata', () => {
+    if (!videoPlane) return;
+
+    const videoWidth = videoEl.videoWidth;
+    const videoHeight = videoEl.videoHeight;
+    const aspectRatio = videoWidth / videoHeight;
+
+    // Fitting the video into a 1:1 square plane
+    if (aspectRatio > 1) {
+      // HORIZONTAL (e.g., 16:9): Crop the left and right edges
+      const repeatX = 1 / aspectRatio;
+      const offsetX = (1 - repeatX) / 2;
+      videoPlane.setAttribute('material', `repeat: ${repeatX} 1; offset: ${offsetX} 0`);
+    } else {
+      // VERTICAL (e.g., 9:16): Crop the top and bottom edges
+      const repeatY = aspectRatio;
+      const offsetY = (1 - repeatY) / 2;
+      videoPlane.setAttribute('material', `repeat: 1 ${repeatY}; offset: 0 ${offsetY}`);
+    }
+  });
+
+  sceneEl.addEventListener("arReady", () => {
+    if (curtain) {
+      curtain.style.opacity = "0";
+      setTimeout(() => {
+        curtain.style.display = "none";
+        clearInterval(uiKiller);
+      }, 500);
+    }
+  });
+
+  videoEl.addEventListener('playing', () => {
+    if (videoPlane) videoPlane.setAttribute('visible', 'true');
+  });
+
+  target.addEventListener("targetFound", async () => {
+    buttonsContainer.style.display = "block";
+
+    const fileId = await getLatestVideoId();
+    if (fileId) {
+      const newSrc = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`;
+
+      if (videoEl.src !== newSrc) {
+        videoEl.src = newSrc;
+        videoEl.load();
       }
     }
+  });
 
-    /* ===============================
-       AR INTERACTION LOGIC
-    ================================ */
-    window.addEventListener("load", async () => {
-      const videoEl = document.querySelector("#driveVideo");
-      const videoPlane = document.querySelector("#videoPlane") || document.querySelector("#videoCircle"); 
-      const target = document.querySelector("#target1");
-      const toggleButton = document.querySelector("#toggleButton");
-      const buttonsContainer = document.querySelector("#planButtons");
-      const curtain = document.querySelector("#blackCurtain"); 
-      const sceneEl = document.querySelector('a-scene');
+  target.addEventListener("targetLost", () => {
+    buttonsContainer.style.display = "none";
+    videoEl.pause();
+    if (videoPlane) videoPlane.setAttribute('visible', 'false');
+    isPlaying = false;
+    toggleButton.textContent = "▶️ Play Video";
+  });
 
-      let isPlaying = false;
-
-      // Continuously clean up any stray MindAR UI elements
-      const uiKiller = setInterval(() => {
-        const uiElements = document.querySelectorAll('[class^="mindar-ui"], [id^="mindar-ui"]');
-        uiElements.forEach(el => el.remove());
-      }, 100);
-
-      // --- AUTO-CROP LOGIC (16:9 / 9:16 Center Fill) ---
-      videoEl.addEventListener('loadedmetadata', () => {
-        if (!videoPlane) return;
-        
-        const videoWidth = videoEl.videoWidth;
-        const videoHeight = videoEl.videoHeight;
-        const aspectRatio = videoWidth / videoHeight;
-
-        if (aspectRatio > 1) { 
-          // HORIZONTAL (e.g., 16:9): Crop left and right edges
-          const repeatX = 1 / aspectRatio; 
-          const offsetX = (1 - repeatX) / 2;
-          videoPlane.setAttribute('material', `repeat: ${repeatX} 1; offset: ${offsetX} 0`);
-        } else {
-          // VERTICAL (e.g., 9:16): Crop top and bottom edges
-          const repeatY = aspectRatio; 
-          const offsetY = (1 - repeatY) / 2;
-          videoPlane.setAttribute('material', `repeat: 1 ${repeatY}; offset: 0 ${offsetY}`);
-        }
-      });
-
-      sceneEl.addEventListener("arReady", () => {
-        if (curtain) {
-          curtain.style.opacity = "0";
-          setTimeout(() => {
-            curtain.style.display = "none";
-            clearInterval(uiKiller);
-          }, 500);
-        }
-      });
-
-      videoEl.addEventListener('playing', () => {
-        if (videoPlane) videoPlane.setAttribute('visible', 'true');
-      });
-
-      target.addEventListener("targetFound", async () => {
-        buttonsContainer.style.display = "block";
-        
-        const fileId = await getLatestVideoId();
-        if (fileId) {
-          const newSrc = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`;
-          
-          if (videoEl.src !== newSrc) {
-            videoEl.src = newSrc;
-            videoEl.load();
-          }
-        }
-      });
-
-      target.addEventListener("targetLost", () => {
-        buttonsContainer.style.display = "none";
+  toggleButton.addEventListener("click", async () => {
+    try {
+      if (!isPlaying) {
+        videoEl.muted = false;
+        await videoEl.play();
+        toggleButton.textContent = "⏸ Pause Video";
+        isPlaying = true;
+      } else {
         videoEl.pause();
-        if (videoPlane) videoPlane.setAttribute('visible', 'false'); 
-        isPlaying = false;
         toggleButton.textContent = "▶️ Play Video";
-      });
+        isPlaying = false;
+      }
+    } catch (err) {
+      console.error("Playback error:", err);
+    }
+  });
+});
 
-      toggleButton.addEventListener("click", async () => {
-        try {
-          if (!isPlaying) {
-            videoEl.muted = false; 
-            await videoEl.play();
-            toggleButton.textContent = "⏸ Pause Video";
-            isPlaying = true;
-          } else {
-            videoEl.pause();
-            toggleButton.textContent = "▶️ Play Video";
-            isPlaying = false;
-          }
-        } catch (err) {
-          console.error("Playback error:", err);
-        }
-      });
-    });
-
-    // Disable context menu
-    document.addEventListener("contextmenu", (e) => e.preventDefault());
-  </script>
+document.addEventListener("contextmenu", (e) => e.preventDefault());
+</script>
 
 </body>
 </html>
