@@ -308,6 +308,31 @@ window.addEventListener("load", async () => {
     }
   });
 
+  // Surface the real reason the camera didn't start, instead of
+  // leaving the black curtain up forever.
+  sceneEl.addEventListener("arError", (err) => {
+    console.error("MindAR failed to start:", err);
+    const loader = document.querySelector("#loader");
+    if (loader) {
+      loader.textContent = "Camera unavailable — check permissions & HTTPS";
+    }
+    clearInterval(uiKiller);
+  });
+
+  // Fallback: if arReady/arError never fire within 8s, something
+  // upstream (script load, targets.mind path, camera permission
+  // prompt ignored) is stuck — log it so it's visible in devtools.
+  setTimeout(() => {
+    if (curtain && curtain.style.display !== "none") {
+      console.warn(
+        "AR did not initialize within 8s. Check: (1) page is served over " +
+        "HTTPS or localhost, (2) camera permission was granted, " +
+        "(3) targets.mind exists at the configured path, " +
+        "(4) if embedded in an iframe, it has allow=\"camera\"."
+      );
+    }
+  }, 8000);
+
   videoEl.addEventListener('playing', () => {
     if (videoPlane) videoPlane.setAttribute('visible', 'true');
   });
